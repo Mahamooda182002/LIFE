@@ -1,0 +1,46 @@
+// User.java
+public class User {
+    private String username;
+    private String password;
+    
+    // Constructors, getters, setters
+}
+
+// Donor.java
+public class Donor {
+    private String name;
+    private String bloodType;
+    private String location;
+    
+    // Constructors, getters, setters
+}
+// AuthController.java
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+    @Autowired
+    private JwtUtil jwtUtil;
+    
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
+        if (userService.isUserExists(user.getUsername())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already exists.");
+        }
+        
+        userService.registerUser(user);
+        return ResponseEntity.ok("User registered successfully.");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> loginUser(@RequestBody User user) {
+        if (!userService.isUserValid(user.getUsername(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
+        }
+        
+        String token = jwtUtil.generateToken(user.getUsername());
+        return ResponseEntity.ok(token);
+    }
+}
