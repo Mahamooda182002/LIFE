@@ -1,0 +1,4 @@
+npx create-react-app blood-donor-finder-app
+cd blood-donor-finder-app
+npm start
+npm install redux react-redux axios
